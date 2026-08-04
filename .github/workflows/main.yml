@@ -1,4 +1,4 @@
-name: Build (temporary fix cuz Im mobile and I cant do shit)
+name: Build my shit
 
 on:
   push:
@@ -43,11 +43,32 @@ jobs:
       - name: Build offline download client (Eaglercraft ${{ matrix.version }})
         run: ./gradlew buildOfflineDownload_${{ matrix.version }} --stacktrace
 
+      - name: Build integrated server (1_5_2 only)
+        if: matrix.version == '1_5_2'
+        working-directory: modules/module-eag-1_5_2/sp-server
+        run: |
+          chmod +x gradlew
+          ./gradlew teavmc
+
+      - name: Build asset pack (1_5_2 only)
+        if: matrix.version == '1_5_2'
+        working-directory: modules/module-eag-1_5_2/epkcompiler
+        run: java -jar CompilePackage.jar "../lwjgl-rundir/resources" "../javascript/assets.epk"
+
+      - name: Assemble offline download HTML (1_5_2 only)
+        if: matrix.version == '1_5_2'
+        working-directory: modules/module-eag-1_5_2
+        run: |
+          chmod +x ZipStableDownload.sh
+          ./ZipStableDownload.sh
+
       - name: Upload build output (for inspection only)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: offline-download-${{ matrix.version }}
-          path: modules/module-eag-${{ matrix.version }}/target_teavm_javascript/javascript/*.html
+          path: |
+            modules/module-eag-${{ matrix.version }}/target_teavm_javascript/javascript/*.html
+            modules/module-eag-1_5_2/stable-download/Offline_Download_Version.html
           if-no-files-found: warn
           retention-days: 7
