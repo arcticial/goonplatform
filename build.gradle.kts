@@ -50,6 +50,14 @@ gradle.includedBuilds
         )
 
         registerAlias(
+            name = "buildOfflineDownload",
+            targetTask =
+                ":target_teavm_javascript:makeMainOfflineDownload",
+            descriptionText =
+                "Builds the single-file offline download client for Eaglercraft $version, without needing to cd into the module"
+        )
+
+        registerAlias(
             name = "buildWasm",
             targetTask =
                 ":target_teavm_wasm_gc:makeMainWasmClientBundle",
