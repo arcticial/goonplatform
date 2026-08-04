@@ -41,20 +41,34 @@ gradle.includedBuilds
                 "Runs the desktop runtime for Eaglercraft $version"
         )
 
+        val offlineDownloadTask =
+            if (version == "1_5_2") {
+                // module-eag-1_5_2 uses a flat layout: the TeaVM plugin
+                // is applied directly to the root project, and its
+                // compile task is just "teavmc" (no target_teavm_javascript
+                // subproject exists here like it does for 1_8 / 1_14).
+                ":teavmc"
+            } else {
+                ":target_teavm_javascript:makeMainOfflineDownload"
+            }
+
         registerAlias(
             name = "buildJavaScript",
-            targetTask =
-                ":target_teavm_javascript:makeMainOfflineDownload",
+            targetTask = offlineDownloadTask,
             descriptionText =
                 "Builds the JavaScript client for Eaglercraft $version"
         )
 
         registerAlias(
             name = "buildOfflineDownload",
-            targetTask =
-                ":target_teavm_javascript:makeMainOfflineDownload",
+            targetTask = offlineDownloadTask,
             descriptionText =
-                "Builds the single-file offline download client for Eaglercraft $version, without needing to cd into the module"
+                if (version == "1_5_2")
+                    "Compiles the JavaScript client for Eaglercraft $version " +
+                        "(note: 1_5_2 has no bundled single-file offline download " +
+                        "task, this only runs the TeaVM compile)"
+                else
+                    "Builds the single-file offline download client for Eaglercraft $version, without needing to cd into the module"
         )
 
         registerAlias(
