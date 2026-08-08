@@ -46,6 +46,8 @@ jobs:
       - name: Build integrated server (1_5_2 only)
         if: matrix.version == '1_5_2'
         working-directory: modules/module-eag-1_5_2/sp-server
+        env:
+          GRADLE_USER_HOME: /tmp/gradle-sp-server
         run: |
           chmod +x gradlew
           ./gradlew teavmc
